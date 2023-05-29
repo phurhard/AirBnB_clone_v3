@@ -7,6 +7,7 @@ from models import storage
 from api.v1.views import state_views
 from markupsafe import escape
 
+
 @state_views.route("/states", methods=['GET'], strict_slashes=False)
 def get_states():
     '''Returns all the state object in the storage'''
@@ -15,6 +16,7 @@ def get_states():
     for state, value in states.items():
         result.append(value.to_dict())
     return jsonify(result), 200
+
 
 @state_views.route("/states/<string:state_id>", methods=['GET'], strict_slashes=False)
 def get_state(state_id):
@@ -25,6 +27,7 @@ def get_state(state_id):
         if value.id == state_id:
             return jsonify(value.to_dict()), 200
     return abort(404)
+
 
 @state_views.route("/states/<string:state_id>", methods=['DELETE'], strict_slashes=False)
 def delete_state(state_id):
@@ -37,6 +40,7 @@ def delete_state(state_id):
             storage.save()
             return jsonify({}), 200
     return abort(404)
+
 
 @state_views.route("/states", methods=['POST'], strict_slashes=False)
 def create_state():
@@ -53,6 +57,7 @@ def create_state():
     storage.new(state)
     storage.save()
     return jsonify(state.to_dict()), 201
+
 
 @state_views.route("/states/<string:state_id>", methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
