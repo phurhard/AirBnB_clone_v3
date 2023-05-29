@@ -109,9 +109,9 @@ class TestFileStorage(unittest.TestCase):
         storage.new(obj1)
         storage.new(obj2)
         storage.new(obj3)
-        state_id1 = list(storage.all(State).values())[0].id
-        state_id2 = list(storage.all(State).values())[1].id
-        user_id = list(storage.all(User).values())[0].id
+        state_id1 = list(storage.all(State).values())[-2].id
+        state_id2 = list(storage.all(State).values())[-1].id
+        user_id = list(storage.all(User).values())[-1].id
 
         # Test retrieving an object by class and id
         self.assertEqual(storage.get(State, state_id1), obj1)
