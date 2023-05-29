@@ -5,7 +5,7 @@
 import os
 from flask import Flask, make_response, jsonify
 from models import storage
-from api.v1.views import app_views, state_views
+from api.v1.views import app_views, state_views, city_views
 
 # configure the host and port
 host = os.getenv("HBNB_API_HOST", "0.0.0.0")
@@ -15,7 +15,7 @@ port = int(os.getenv("HBNB_API_PORT", 5000))
 app = Flask(__name__)
 app.register_blueprint(app_views)
 app.register_blueprint(state_views)
-
+app.register_blueprint(city_views)
 
 # Create a method to stop the service
 @app.teardown_appcontext
