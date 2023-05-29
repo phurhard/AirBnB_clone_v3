@@ -79,6 +79,50 @@ class TestFileStorage(unittest.TestCase):
         self.assertIs(new_dict, storage._FileStorage__objects)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Test that counts returns the number of objects"""
+        storage = FileStorage()
+        obj1 = BaseModel()
+        obj2 = BaseModel()
+        obj3 = User()
+        obj4 = State()
+        storage.new(obj1)
+        storage.new(obj2)
+        storage.new(obj3)
+        storage.new(obj4)
+
+        self.assertEqual(storage.count(), 4)
+        self.assertEqual(storage.count(BaseModel), 2)
+        self.assertEqual(storage.count(State), 1)
+        self.assertEqual(storage.count("User"), 1)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test the get method"""
+        # Create an instance of the Storage class
+        storage = FileStorage()
+
+        # Create some objects and add them to the storage
+        obj1 = State()
+        obj2 = State()
+        obj3 = User()
+        storage.new(obj1)
+        storage.new(obj2)
+        storage.new(obj3)
+        state_id1 = list(storage.all(State).values())[-2].id
+        state_id2 = list(storage.all(State).values())[-1].id
+        user_id = list(storage.all(User).values())[-1].id
+
+        # Test retrieving an object by class and id
+        self.assertEqual(storage.get(State, state_id1), obj1)
+        self.assertEqual(storage.get(State, state_id2), obj2)
+        self.assertEqual(storage.get(User, user_id), obj3)
+
+        # Test retrieving an object that does not exist
+        self.assertIsNone(storage.get(User, state_id1))
+        self.assertIsNone(storage.get("State", user_id))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_new(self):
         """test that new adds an object to the FileStorage.__objects attr"""
         storage = FileStorage()
