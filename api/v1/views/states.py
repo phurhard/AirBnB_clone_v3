@@ -18,18 +18,19 @@ def get_states():
     return jsonify(result), 200
 
 
-@state_views.route("/states/<string:state_id>", methods=['GET'], strict_slashes=False)
+@state_views.route("/states/<string:state_id>", methods=['GET'],
+                   strict_slashes=False)
 def get_state(state_id):
     '''Returns a state object based on an id'''
     states = storage.all(State)
-    
     for k, value in states.items():
         if value.id == state_id:
             return jsonify(value.to_dict()), 200
     return abort(404)
 
 
-@state_views.route("/states/<string:state_id>", methods=['DELETE'], strict_slashes=False)
+@state_views.route("/states/<string:state_id>", methods=['DELETE'],
+                   strict_slashes=False)
 def delete_state(state_id):
     '''Deletes a state object based on state id'''
     states = storage.all(State)
@@ -59,7 +60,8 @@ def create_state():
     return jsonify(state.to_dict()), 201
 
 
-@state_views.route("/states/<string:state_id>", methods=['PUT'], strict_slashes=False)
+@state_views.route("/states/<string:state_id>", methods=['PUT'],
+                   strict_slashes=False)
 def update_state(state_id):
     '''Updates a state object'''
     if not request.get_json():
@@ -68,7 +70,7 @@ def update_state(state_id):
         ignored_keys = ["id", "created_at", "updated_at"]
         data = request.get_json()
         states = storage.all(State)
-        for k,v in states.items():
+        for k, v in states.items():
             if v.id == state_id:
                 state = v.to_dict()
                 '''Don't know of a way to make this value v available
@@ -76,9 +78,8 @@ def update_state(state_id):
                 as such makes a copy of it, hence at the end i can't
                 save the changes made to this copy, i can't make it
                 appear on the main object'''
-        
         state = state
-        
+
         for k, v in data.items():
             for key, value in state.items():
                 if k in ignored_keys or key in ignored_keys:

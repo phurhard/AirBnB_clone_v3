@@ -3,12 +3,14 @@
 '''
 from flask import Flask, make_response, jsonify, abort, request
 from models.state import State
+from models.city import City
 from models import storage
 from api.v1.views import city_views
 from markupsafe import escape
 
+
 @city_views.route("/states/<string:state_id>/cities", methods=['GET'],
-        strict_slashes=False)
+                  strict_slashes=False)
 def get_cities(state_id):
     '''Returns all the cities with state_id object in the storage'''
     cities = storage.all(City)
@@ -20,17 +22,20 @@ def get_cities(state_id):
         abort(404)
     return jsonify(result), 200
 
-@city_views.route("/cities/<string:city_id>", methods=['GET'], strict_slashes=False)
+
+@city_views.route("/cities/<string:city_id>", methods=['GET'],
+                  strict_slashes=False)
 def get_city(city_id):
     '''Returns a city object based on an id'''
     cities = storage.all(City)
-    
     for value in cities.values():
         if value.id == city_id:
             return jsonify(value.to_dict()), 200
     return abort(404)
 
-@city_views.route("/cities/<string:city_id>", methods=['DELETE'], strict_slashes=False)
+
+@city_views.route("/cities/<string:city_id>", methods=['DELETE'],
+                  strict_slashes=False)
 def delete_city(city_id):
     '''Deletes a city object based on state id'''
     cities = storage.all(City)
@@ -42,7 +47,9 @@ def delete_city(city_id):
             return jsonify({}), 200
     return abort(404)
 
-@city_views.route("/states/<string:state_id>/cities", methods=['POST'], strict_slashes=False)
+
+@city_views.route("/states/<string:state_id>/cities", methods=['POST'],
+                  strict_slashes=False)
 def create_city(state_id):
     '''Creates a new state object'''
     temp = {}
@@ -61,23 +68,22 @@ def create_city(state_id):
             name: data['name']
             state_id: state_id
             }
-    state = State(**(city))
+    state = City(**(city))
     storage.new(state)
     storage.save()
     return jsonify(state.to_dict()), 201
 
-@city_views.route("/cities/<string:city_id>", methods=['PUT'], strict_slashes=False)
+
+@city_views.route("/cities/<string:city_id>", methods=['PUT'],
+                  strict_slashes=False)
 def update_city(city_id):
     '''Updates a state object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    else:
-        ignored_keys = ["id", "created_at", "updated_at"]
-        data = request.get_json()
-        cities = storage.all(City)
-        for value in cities.values():
-            if value.id == city_id:
-                value['name'] = request.get_json()
-        storage.save()
-        return jsonify(state), 200
+    cities = storage.all(City)
+    for value in cities.values():
+        if value.id == city_id:
+            value['name'] = request.get_json('name')
+    storage.save()
+    return jsonify(cities), 200
     abort(404)
