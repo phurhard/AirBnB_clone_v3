@@ -6,7 +6,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models import storage
-from api.v1.views import city_views
+from api.v1.views import amenity_views
 from markupsafe import escape
 
 
@@ -63,7 +63,7 @@ def create_amenity():
             number_rooms: request.get_json('number_rooms', 0),
             number_bathrooms: request.get_json('number_bathrooms', 0),
             max_guest: request.get_json('max_guest', 0),
-            price_by_night: request.get_json('price_by_night', 0)
+            price_by_night: request.get_json('price_by_night', 0),
             latitude: request.get_json("latitude", NULL),
             longitude: request.get_json('longitude', NULL)
             }
