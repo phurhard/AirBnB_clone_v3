@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-''' This is the first endpoint of my flask api
-'''
+""" This is the first endpoint of my flask api
+"""
 # Import required libraries
 import os
 from flask import Flask, make_response, jsonify

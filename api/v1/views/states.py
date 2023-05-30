@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-'''RESTful API actions for state
-'''
+"""RESTful API actions for state
+"""
 from flask import Flask, make_response, jsonify, abort, request
 from models.state import State
 from models import storage

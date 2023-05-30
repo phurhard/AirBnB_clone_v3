@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-''' Index view of the app
-'''
+""" Index view of the app
+"""
 from flask import jsonify
 from api.v1.views import app_views
 from models import storage
