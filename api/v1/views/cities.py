@@ -14,10 +14,15 @@ from markupsafe import escape
 def get_cities(state_id):
     '''Returns all the cities with state_id object in the storage'''
     cities = storage.all(City)
+    states = storage.all(State)
     result = []
-    for value in cities.values():
-        if value.state_id == state_id:
-            result.append(value.to_dict())
+    for value in states.values():
+        if state_id in value:
+            for value in cities.values():
+                if value.state_id == state_id:
+                    result.append(value.to_dict())
+        else:
+            abort(404)
     return jsonify(result), 200
     abort(404)
 
@@ -51,23 +56,21 @@ def delete_city(city_id):
                   strict_slashes=False)
 def create_city(state_id):
     '''Creates a new state object'''
-    temp = {}
+    if not request.get_json():
+        abort(400, "Not a JSON")
+    data = request.get_json()
+    if 'name' not in data:
+        abort(400, "Missing name")
+    temp = none
     states = storage.all(State)
     for value in states.values():
         if value.id == state_id:
-            temp.append(value)
+            temp = value
+            break
     if not temp:
         abort(404)
-    data = request.get_json()
-    if not data:
-        abort(400, "Not a JSON")
-    if 'name' not in data:
-        abort(400, "Missing name")
-    city = {
-            "name": data['name'],
-            "state_id": state_id
-            }
-    state = City(**(city))
+    name = data.get('name')
+    state = City(name=name, state_id=state_id)
     storage.new(state)
     storage.save()
     return jsonify(state.to_dict()), 201

@@ -10,6 +10,7 @@ from api.v1.views import amenity_views
 from markupsafe import escape
 from api.v1.views import amenity_views
 
+
 @amenity_views.route("/amenities", methods=['GET'],
                      strict_slashes=False)
 def get_amenities():
@@ -18,9 +19,8 @@ def get_amenities():
     result = []
     for value in amenities.values():
         result.append(value.to_dict())
-    if not result:
-        abort(404)
     return jsonify(result), 200
+    abort(404)
 
 
 @amenity_views.route("/amenities/<string:amenity_id>", methods=['GET'],

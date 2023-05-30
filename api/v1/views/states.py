@@ -70,7 +70,8 @@ def update_state(state_id):
     states = storage.all(State)
     for k, v in states.items():
         if v.id == state_id:
-            v['name'] = request.get_json('name')
+            state = states[k].to_dict
+    state.name = request.get_json('name')
     storage.save()
-    return jsonify(states), 200
+    return jsonify(state), 200
     abort(404)
