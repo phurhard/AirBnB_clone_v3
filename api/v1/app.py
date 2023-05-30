@@ -5,7 +5,7 @@
 import os
 from flask import Flask, make_response, jsonify
 from models import storage
-from api.v1.views import app_views, state_views, city_views
+from api.v1.views import app_views, state_views, city_views, amenity_views
 
 # configure the host and port
 host = os.getenv("HBNB_API_HOST", "0.0.0.0")
@@ -16,8 +16,10 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 app.register_blueprint(state_views)
 app.register_blueprint(city_views)
-
+app.register_blueprint(amenity_views)
 # Create a method to stop the service
+
+
 @app.teardown_appcontext
 def teardown(exception):
     '''This method handles the app.teardowncontext
@@ -25,6 +27,8 @@ def teardown(exception):
     storage.close()
 
 # Error handler
+
+
 @app.errorhandler(404)
 def not_found(error):
     '''Returns a json of error not found message'''
