@@ -18,9 +18,8 @@ def get_cities(state_id):
     for value in cities.values():
         if value.state_id == state_id:
             result.append(value.to_dict())
-    if not result:
-        abort(404)
     return jsonify(result), 200
+    abort(404)
 
 
 @city_views.route("/cities/<string:city_id>", methods=['GET'],
