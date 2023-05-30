@@ -65,29 +65,12 @@ def create_state():
 def update_state(state_id):
     '''Updates a state object'''
     if not request.get_json():
-        return abort(400)
-    else:
-        ignored_keys = ["id", "created_at", "updated_at"]
-        data = request.get_json()
-        states = storage.all(State)
-        for k, v in states.items():
-            if v.id == state_id:
-                state = v.to_dict()
-                '''Don't know of a way to make this value v available
-                without assigning it to a variable, and asssigning it
-                as such makes a copy of it, hence at the end i can't
-                save the changes made to this copy, i can't make it
-                appear on the main object'''
-        state = state
-
-        for k, v in data.items():
-            for key, value in state.items():
-                if k in ignored_keys or key in ignored_keys:
-                    pass
-                else:
-                    if k == key:
-                        state[key] = v
-            state[k] = v
-        storage.save()
-        return jsonify(state), 200
-    return abort(404)
+        abort(400, "Not a JSON")
+    data = request.get_json()
+    states = storage.all(State)
+    for k, v in states.items():
+        if v.id == state_id:
+            v['name'] = request.get_json('name')
+    storage.save()
+    return jsonify(states), 200
+    abort(404)
