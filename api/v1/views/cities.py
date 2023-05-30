@@ -16,15 +16,17 @@ def get_cities(state_id):
     cities = storage.all(City)
     states = storage.all(State)
     result = []
+    state_found = False
     for value in states.values():
-        if state_id in value:
-            for value in cities.values():
-                if value.state_id == state_id:
-                    result.append(value.to_dict())
-        else:
-            abort(404)
+        if value.id == state_id:
+            state_found = True
+            break
+    if not state_found:
+        abort(404)
+    for value in cities.values():
+        if value.state_id == state_id:
+            result.append(value.to_dict())
     return jsonify(result), 200
-    abort(404)
 
 
 @city_views.route("/cities/<string:city_id>", methods=['GET'],
