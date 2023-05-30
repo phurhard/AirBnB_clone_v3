@@ -8,7 +8,7 @@ from models.amenity import Amenity
 from models import storage
 from api.v1.views import amenity_views
 from markupsafe import escape
-
+from api.v1.views import amenity_views
 
 @amenity_views.route("/amenities", methods=['GET'],
                      strict_slashes=False)
