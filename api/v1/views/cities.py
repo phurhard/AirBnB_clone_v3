@@ -68,6 +68,7 @@ def create_city(state_id):
     state = states.get(key)
     if not state:
         abort(404)
+    data.update({"state_id": state_id})
     new_city = City(**data)
     storage.new(new_city)
     storage.save()
