@@ -63,31 +63,32 @@ def create_city(state_id):
     data = request.get_json()
     if 'name' not in data:
         abort(400, "Missing name")
-    temp = none
+    key = 'State.' + state_id
     states = storage.all(State)
-    for value in states.values():
-        if value.id == state_id:
-            temp = value
-            break
-    if not temp:
+    state = states.get(key)
+    if not state:
         abort(404)
-    name = data.get('name')
-    state = City(name=name, state_id=state_id)
-    storage.new(state)
+    new_city = City(**data)
+    storage.new(new_city)
     storage.save()
-    return jsonify(state.to_dict()), 201
+    return jsonify(new_city.to_dict()), 201
 
 
 @city_views.route("/cities/<string:city_id>", methods=['PUT'],
                   strict_slashes=False)
 def update_city(city_id):
-    '''Updates a state object'''
+    '''Updates a city object'''
     if not request.get_json():
         abort(400, "Not a JSON")
+    key = 'City.' + city_id
     cities = storage.all(City)
-    for value in cities.values():
-        if value.id == city_id:
-            value['name'] = request.get_json('name')
+    city = cities.get(key)
+    if not city:
+        abort(404)
+    for key, value in (request.get_json()).items():
+        if key != 'id' and key != 'created_at' and key != 'updated_at' \
+                and key != 'state_id':
+            setattr(city, key, value)
     storage.save()
-    return jsonify(cities), 200
+    return jsonify(city.to_dict()), 200
     abort(404)

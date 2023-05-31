@@ -57,17 +57,7 @@ def create_amenity():
         abort(400, "Not a JSON")
     if 'name' not in data:
         abort(400, "Missing name")
-    amenity = {
-            name: request.get_json('name'),
-            description: request.get_json('description', NULL),
-            number_rooms: request.get_json('number_rooms', 0),
-            number_bathrooms: request.get_json('number_bathrooms', 0),
-            max_guest: request.get_json('max_guest', 0),
-            price_by_night: request.get_json('price_by_night', 0),
-            latitude: request.get_json("latitude", NULL),
-            longitude: request.get_json('longitude', NULL)
-            }
-    new_amenity = Amenity(**amenity)
+    new_amenity = Amenity(**data)
     storage.new(new_amenity)
     storage.save()
     return jsonify(new_amenity.to_dict()), 201
@@ -79,19 +69,14 @@ def update_amenity(amenity_id):
     '''Updates a amenity object'''
     if not request.get_json():
         abort(400, "Not a JSON")
+    key = 'Amenity.' + amenity_id
     amenities = storage.all(Amenity)
-    for value in amenities.values():
-        if value.id == amenity_id:
-            value['name'] = request.get_json('name')
-            value['description'] = request.get_json('description', NULL)
-            value['number_rooms'] = request.get_json('number_rooms', 0)
-            value['number_bathrooms'] = request.get_json(
-                            'number_bathrooms', 0)
-            value['max_guest'] = request.get_json('max_guest', 0)
-            value['price_by_night'] = request.get_json('price_by_night',
-                                                       0)
-            value['latitude'] = request.get_json("latitude", NULL)
-            value['longitude'] = request.get_json('longitude', NULL)
-        storage.save()
-        return jsonify(amenities), 200
+    amenity = amenities.get(key)
+    if not amenity:
+        abort(404)
+    for key, value in (request.get_json()).items():
+        if key != 'id' and key != 'created_at' and key != 'updated_at':
+            setattr(amenity, key, value)
+    storage.save()
+    return jsonify(amenity.to_dict()), 200
     abort(404)
