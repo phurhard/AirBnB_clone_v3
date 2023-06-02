@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""RESTful API actions for place """
+"""RESTful API actions for place"""
 from flask import Flask, make_response, jsonify, abort, request
 from models.state import State
 from models.city import City
@@ -13,7 +13,7 @@ from markupsafe import escape
 @place_views.route("/cities/<string:city_id>/places", methods=['GET'],
                    strict_slashes=False)
 def get_places(city_id):
-    '''Returns all the places with city_id object in the storage'''
+    """Returns all the places with city_id object in the storage"""
     cities = storage.all(City)
     places = storage.all(Place)
     result = []
@@ -33,7 +33,7 @@ def get_places(city_id):
 @place_views.route("/place/<string:place_id>", methods=['GET'],
                    strict_slashes=False)
 def get_place(place_id):
-    '''Returns a place object based on an id'''
+    """Returns a place object based on an id"""
     places = storage.all(Place)
     for value in places.values():
         if value.id == place_id:
@@ -44,7 +44,7 @@ def get_place(place_id):
 @place_views.route("/places/<string:place_id>", methods=['DELETE'],
                    strict_slashes=False)
 def delete_place(place_id):
-    '''Deletes a place object based on state id'''
+    """Deletes a place object based on state id"""
     places = storage.all(Place)
 
     for value in places.values():
@@ -58,7 +58,7 @@ def delete_place(place_id):
 @place_views.route("/cities/<string:city_id>/places", methods=['POST'],
                    strict_slashes=False)
 def create_place(city_id):
-    '''Creates a new place object'''
+    """Creates a new place object"""
     if not request.get_json():
         abort(400, "Not a JSON")
     data = request.get_json()
@@ -81,7 +81,7 @@ def create_place(city_id):
 @place_views.route("/places/<string:place_id>", methods=['PUT'],
                    strict_slashes=False)
 def update_place(place_id):
-    '''Updates a place object'''
+    """Updates a place object"""
     if not request.get_json():
         abort(400, "Not a JSON")
     key = 'Place.' + place_id

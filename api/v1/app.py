@@ -6,7 +6,7 @@ import os
 from flask import Flask, make_response, jsonify
 from models import storage
 from api.v1.views import app_views, state_views, city_views, amenity_views
-from api.v1.views import user_views
+from api.v1.views import user_views, place_views
 
 
 # configure the host and port
@@ -20,6 +20,7 @@ app.register_blueprint(state_views)
 app.register_blueprint(city_views)
 app.register_blueprint(amenity_views)
 app.register_blueprint(user_views)
+app.register_blueprint(place_views)
 # Create a method to stop the service
 
 
