@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""RESTful API actions for state
-"""
+"""RESTful API actions for place """
 from flask import Flask, make_response, jsonify, abort, request
 from models.state import State
 from models.city import City
