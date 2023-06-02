@@ -54,7 +54,7 @@ def create_user():
         abort(400, "Missing email")
     if 'password' not in data:
         abort(400, "Missing password")
-    new_user = Amenity(**data)
+    new_user = User(**data)
     storage.new(new_user)
     storage.save()
     return jsonify(new_user.to_dict()), 201
@@ -66,7 +66,7 @@ def update_user(user_id):
     '''Updates a user object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'User.' + amenity_id
+    key = 'User.' + user_id
     users = storage.all(User)
     user = users.get(key)
     if not user:
