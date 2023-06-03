@@ -27,10 +27,12 @@ def get_places(city_id):
     for value in places.values():
         if value.city_id == city_id:
             result.append(value.to_dict())
+    if not result:
+        abort(404)
     return jsonify(result), 200
 
 
-@place_views.route("/place/<string:place_id>", methods=['GET'],
+@place_views.route("/places/<string:place_id>", methods=['GET'],
                    strict_slashes=False)
 def get_place(place_id):
     """Returns a place object based on an id"""
