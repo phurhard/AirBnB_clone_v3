@@ -16,7 +16,6 @@ def get_places(city_id):
     """Returns all the places with city_id object in the storage"""
     cities = storage.all(City)
     places = storage.all(Place)
-    result = []
     city_found = False
     for value in cities.values():
         if value.id == city_id:
@@ -24,9 +23,11 @@ def get_places(city_id):
             break
     if not city_found:
         abort(404)
-    for value in places.values():
-        if value.city_id == city_id:
-            result.append(value.to_dict())
+    result = [
+        value.to_dict()
+        for value in places.values()
+        if value.city_id == city_id
+    ]
     if not result:
         abort(404)
     return jsonify(result), 200
@@ -68,7 +69,7 @@ def create_place(city_id):
         abort(400, "Missing user_id")
     if 'name' not in data():
         abort(400, "Missing name")
-    key = 'City.' + city_id
+    key = f'City.{city_id}'
     cities = storage.all(City)
     city = cities.get(key)
     if not state:
@@ -86,15 +87,13 @@ def update_place(place_id):
     """Updates a place object"""
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'Place.' + place_id
+    key = f'Place.{place_id}'
     places = storage.all(Place)
     place = places.get(key)
     if not place:
         abort(404)
     for key, value in (request.get_json()).items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at' \
-                and key != 'city_id' and key != "user_id":
+        if key not in ['id', 'created_at', 'updated_at', 'city_id', "user_id"]:
             setattr(place, key, value)
     storage.save()
     return jsonify(city.to_dict()), 200
-    abort(404)

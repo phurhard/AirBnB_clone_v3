@@ -15,17 +15,14 @@ def get_cities(state_id):
     '''Returns all the cities with state_id object in the storage'''
     cities = storage.all(City)
     states = storage.all(State)
-    result = []
-    state_found = False
-    for value in states.values():
-        if value.id == state_id:
-            state_found = True
-            break
+    state_found = any(value.id == state_id for value in states.values())
     if not state_found:
         abort(404)
-    for value in cities.values():
-        if value.state_id == state_id:
-            result.append(value.to_dict())
+    result = [
+        value.to_dict()
+        for value in cities.values()
+        if value.state_id == state_id
+    ]
     return jsonify(result), 200
 
 
@@ -63,7 +60,7 @@ def create_city(state_id):
     data = request.get_json()
     if 'name' not in data:
         abort(400, "Missing name")
-    key = 'State.' + state_id
+    key = f'State.{state_id}'
     states = storage.all(State)
     state = states.get(key)
     if not state:
@@ -81,15 +78,13 @@ def update_city(city_id):
     '''Updates a city object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'City.' + city_id
+    key = f'City.{city_id}'
     cities = storage.all(City)
     city = cities.get(key)
     if not city:
         abort(404)
     for key, value in (request.get_json()).items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at' \
-                and key != 'state_id':
+        if key not in ['id', 'created_at', 'updated_at', 'state_id']:
             setattr(city, key, value)
     storage.save()
     return jsonify(city.to_dict()), 200
-    abort(404)

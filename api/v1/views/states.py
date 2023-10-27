@@ -12,9 +12,7 @@ from markupsafe import escape
 def get_states():
     '''Returns all the state object in the storage'''
     states = storage.all(State)
-    result = []
-    for state, value in states.items():
-        result.append(value.to_dict())
+    result = [value.to_dict() for state, value in states.items()]
     return jsonify(result), 200
 
 
@@ -66,14 +64,13 @@ def update_state(state_id):
     '''Updates a state object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'State.' + state_id
+    key = f'State.{state_id}'
     states = storage.all(State)
     state = states.get(key)
     if not state:
         abort(404)
     for key, value in (request.get_json()).items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
+        if key not in ['id', 'created_at', 'updated_at']:
             setattr(state, key, value)
     storage.save()
     return jsonify(state.to_dict()), 200
-    abort(404)

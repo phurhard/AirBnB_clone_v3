@@ -12,11 +12,8 @@ from api.v1.views import user_views
 def get_user():
     '''Returns all the users  object in the storage'''
     users = storage.all(User)
-    result = []
-    for value in users.values():
-        result.append(value.to_dict())
+    result = [value.to_dict() for value in users.values()]
     return jsonify(result), 200
-    abort(404)
 
 
 @user_views.route("/users/<string:user_id>", methods=['GET'],
@@ -66,15 +63,13 @@ def update_user(user_id):
     '''Updates a user object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'User.' + user_id
+    key = f'User.{user_id}'
     users = storage.all(User)
     user = users.get(key)
     if not user:
         abort(404)
     for key, value in (request.get_json()).items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at'\
-                and key != 'email':
+        if key not in ['id', 'created_at', 'updated_at', 'email']:
             setattr(user, key, value)
     storage.save()
     return jsonify(user.to_dict()), 200
-    abort(404)

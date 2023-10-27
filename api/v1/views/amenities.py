@@ -16,11 +16,8 @@ from api.v1.views import amenity_views
 def get_amenities():
     '''Returns all the amenities  object in the storage'''
     amenities = storage.all(Amenity)
-    result = []
-    for value in amenities.values():
-        result.append(value.to_dict())
+    result = [value.to_dict() for value in amenities.values()]
     return jsonify(result), 200
-    abort(404)
 
 
 @amenity_views.route("/amenities/<string:amenity_id>", methods=['GET'],
@@ -69,14 +66,13 @@ def update_amenity(amenity_id):
     '''Updates a amenity object'''
     if not request.get_json():
         abort(400, "Not a JSON")
-    key = 'Amenity.' + amenity_id
+    key = f'Amenity.{amenity_id}'
     amenities = storage.all(Amenity)
     amenity = amenities.get(key)
     if not amenity:
         abort(404)
     for key, value in (request.get_json()).items():
-        if key != 'id' and key != 'created_at' and key != 'updated_at':
+        if key not in ['id', 'created_at', 'updated_at']:
             setattr(amenity, key, value)
     storage.save()
     return jsonify(amenity.to_dict()), 200
-    abort(404)
